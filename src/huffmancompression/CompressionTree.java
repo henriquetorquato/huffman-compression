@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class CompressionTree {
 	
+	private Node tree;
 	private String content;
 	private String[] tokens;
 	private Map<String, Integer> occurrences;
@@ -17,7 +18,46 @@ public class CompressionTree {
 		this.occurrences = this.mapOccurrences();
 	}
 	
-	public String compress() {
+	public static String decode(String content, Node tree) {
+		// Split the code into its components
+		var codes = content.split(" ");
+		var message = new StringBuilder();
+		
+		// Walk the node based on the code
+		for (var i = 0; i < codes.length; i++) {
+			var node = tree;
+			var characters = codes[i].toCharArray();
+			
+			for (var character : characters) {
+				if (character == '0') {
+					node = node.getLeftNode();
+				} else if (character == '1') {
+					node = node.getRightNode();
+				} else {
+					continue;
+				}
+			}
+			
+			// Get the node value
+			var value = node.getContent()[0];
+			
+			// Fix space character encoding with punctuation
+			if (message.length() > 0) {
+				var previousCharacter = message.charAt(message.length() - 1);
+				var lastCharacter = value.charAt(value.length() - 1);
+				
+				if (!Character.isSpaceChar(previousCharacter) && !Character.isSpaceChar(lastCharacter)) {
+					message.append(" ");
+				}
+			}		
+			
+			message.append(value);
+		}
+		
+		return message.toString();
+	}
+	
+	public String encode() {
 		// Get the compression tree
 		var root = buildNodeTree();
 		var compressed = new StringBuilder();
@@ -49,7 +89,15 @@ public class CompressionTree {
 		return compressed.toString();
 	}
 	
+	public Node getTree() {
+		return this.tree;
+	}
+	
 	private Node buildNodeTree() {	
+		if (this.tree != null) {
+			return this.tree;
+		}
+		
 		// Create a node for each token
 		var nodes = new ArrayList<Node>();
 		for (var token : this.occurrences.keySet()) {
@@ -73,7 +121,8 @@ public class CompressionTree {
 		}
 		
 		// The single node on the list is the root node
-		return nodes.get(0);
+		this.tree = nodes.get(0);
+		return this.tree;
 	}
 	
 	// Split the content into it's tokens
