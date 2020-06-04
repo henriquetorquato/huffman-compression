@@ -1,13 +1,10 @@
 package huffmancompression;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 // Represents a tree node
 public class Node {
 
 	private String[] contents;
-	private Integer occurrence;
+	private Integer probability;
 	
 	// For value 0
 	private Node leftNode;
@@ -15,10 +12,10 @@ public class Node {
 	private Node rightNode;
 	
 	// Constructor for creating a node without children
-	public Node(String content) {
+	public Node(String content, Integer probability) {
 		this.leftNode = null;
 		this.rightNode = null;
-		this.occurrence = 1;
+		this.probability = probability;
 		this.contents = new String[] { content };
 	}
 	
@@ -28,7 +25,7 @@ public class Node {
 		this.rightNode = rightNode;
 		
 		// New node occurrence is the sum of it's children occurrence
-		this.occurrence = leftNode.occurrence + rightNode.occurrence;
+		this.probability = leftNode.probability + rightNode.probability;
 		this.contents = new String[leftNode.contents.length + rightNode.contents.length];
 		
 		// Copy children content to current node content
@@ -40,16 +37,42 @@ public class Node {
 		return this.contents;
 	}
 	
-	public Integer getOccurrence() {
-		return this.occurrence;
+	public Integer getProbability() {
+		return this.probability;
 	}
 	
 	public void incrementOccurrence(Integer ocurrence) {
-		this.occurrence += this.occurrence;
+		this.probability += this.probability;
+	}
+	
+	public Node getLeftNode() {
+		return this.leftNode;
+	}
+	
+	public Node getRightNode() {
+		return this.rightNode;
+	}
+	
+	public Boolean isLeftNode(String word) {
+		return arrayContains(word, this.leftNode.contents);
+	}
+	
+	public Boolean isRightNode(String word) {
+		return arrayContains(word, this.rightNode.contents);
 	}
 	
 	public String toString() {
 		return String.join(", ", this.contents);
+	}
+	
+	private Boolean arrayContains(String value, String[] items) {
+		for (var item : items) {
+			if (value.equals(item)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 }

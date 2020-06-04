@@ -11,10 +11,16 @@ public class HuffmanCompression {
 		var arguments = Arguments.parse(args);
 		var content = readFile(arguments.getFilePath());
 		
-		var compression = new CompressionTree(content);
-		var tree = compression.getTree();
+		var tree = new CompressionTree(content);
+		var compressed = tree.compress();
 		
-		System.out.println(tree.toString());
+		System.out.printf("Original content lenght: %d characters", content.length());
+		System.out.println();
+		System.out.printf("Compressed content lenght: %d characters", compressed.length());
+		System.out.println();
+		System.out.println();
+		System.out.println(content);
+		System.out.println(compressed);
 	}
 	
 	private static String readFile(String filePath) {
